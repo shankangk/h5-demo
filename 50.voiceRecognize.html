@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>语音识别示例</title>
+</head>
+<body>
+  <button onclick="startRecognition()">开始语音识别</button>
+  <button onclick="stopRecognition()">停止语音识别</button>
+  
+  <script>
+    var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+    recognition.lang = 'zh-CN';
+
+    recognition.onresult = function(event) {
+      var transcript = event.results[0][0].transcript;
+      console.log('识别结果：', transcript);
+      // 在这里可以进一步处理识别结果，例如显示在页面上
+    };
+
+    recognition.onend = function() {
+      console.log('语音识别结束。');
+    };
+
+    recognition.onerror = function(event) {
+      console.error('语音识别错误：', event.error);
+    };
+
+    function startRecognition() {
+      recognition.start();
+      console.log('开始语音识别。');
+    }
+
+    function stopRecognition() {
+      recognition.stop();
+      console.log('停止语音识别。');
+    }
+  </script>
+</body>
+</html>

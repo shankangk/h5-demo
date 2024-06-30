@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>获取当前位置信息</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        box-sizing: border-box;
+      }
+
+      .modal.show {
+        display: block;
+      }
+
+      .modal-header {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .modal-content {
+        text-align: center;
+      }
+
+      .close {
+        float: right;
+        font-size: 20px;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          alert("Geolocation is not supported by this browser.");
+        }
+      }
+
+      function showPosition(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var latitudeElement = document.getElementById("latitude");
+        var longitudeElement = document.getElementById("longitude");
+
+        latitudeElement.textContent = "纬度：" + latitude;
+        longitudeElement.textContent = "经度：" + longitude;
+      }
+
+      function showError(error) {
+        var errorElement = document.getElementById("error");
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorElement.textContent = "用户拒绝了位置请求，请允许访问位置以获取您的位置信息。";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorElement.textContent = "位置信息不可用。";
+            break;
+          case error.TIMEOUT:
+            errorElement.textContent = "获取位置信息超时。";
+            break;
+          case error.UNKNOWN_ERROR:
+            errorElement.textContent = "发生未知错误。";
+            break;
+        }
+      }
+
+      function showModal() {
+        setTimeout(() => {
+          var modal = document.getElementById("locationModal");
+          modal.classList.add("show");
+        }, 0)
+        getLocation();
+      }
+
+      function closeModal() {
+        var modal = document.getElementById("locationModal");
+        modal.classList.remove("show");
+      }
+    </script>
+  </head>
+  <body>
+    <button onclick="showModal()">获取经纬度</button>
+
+    <div id="locationModal" class="modal">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div class="modal-header">当前位置</div>
+      <div class="modal-content">
+        <p id="latitude">纬度：未获取</p>
+        <p id="longitude">经度：未获取</p>
+        <p id="address">地址：加载中</p>
+        <p id="error"></p>
+      </div>
+    </div>
+  </body>
+</html>

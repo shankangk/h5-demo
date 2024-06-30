@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>获取当前经纬度信息示例</title>
+</head>
+<body>
+  <button onclick="getLocation()">获取位置信息</button>
+  <p id="location">位置信息将显示在这里</p>
+  
+  <script>
+    function getLocation() {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+        } else {
+            alert('抱歉，您的浏览器不支持获取地理位置信息。');
+        }
+    }
+
+    function successCallback(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+        var altitude = position.coords.altitude;
+        var altitudeAccuracy = position.coords.altitudeAccuracy;
+        var heading = position.coords.heading;
+        var speed = position.coords.speed;
+        var timestamp = new Date(position.timestamp);
+
+        var locationInfo = `
+          纬度：${latitude}<br>
+          经度：${longitude}<br>
+          精确度：${accuracy} 米<br>
+          海拔高度：${altitude || '未知'} 米<br>
+          海拔精确度：${altitudeAccuracy || '未知'} 米<br>
+          移动方向：${heading || '未知'} 度<br>
+          速度：${speed || '静止'} 米/秒<br>
+          时间戳：${timestamp}
+        `;
+
+        document.getElementById('location').innerHTML = locationInfo;
+    }
+
+    function errorCallback(error) {
+        console.error('获取位置信息失败：', error.message);
+    }
+  </script>
+</body>
+</html>

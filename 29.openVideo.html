@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打开视频示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        video {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>打开视频</h2>
+    <video controls autoplay>
+        <source src="example.mp4" type="video/mp4">
+        <!-- 支持添加其他视频格式，如 <source src="example.webm" type="video/webm"> -->
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+</body>
+</html>

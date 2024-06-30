@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>统计数据示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        #chartContainer {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>请输入数据：</h3>
+    <form id="dataForm">
+        <label for="category">类别：</label>
+        <input type="text" id="category" name="category" required>
+        <label for="value">值：</label>
+        <input type="number" id="value" name="value" required>
+        <button type="submit">添加数据</button>
+    </form>
+    <div id="chartContainer">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const dataForm = document.getElementById('dataForm');
+        const categoryInput = document.getElementById('category');
+        const valueInput = document.getElementById('value');
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        let categories = [];
+        let values = [];
+
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: '统计数据',
+                    data: values,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        dataForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const category = categoryInput.value;
+            const value = valueInput.value;
+
+            categories.push(category);
+            values.push(Number(value));
+
+            myChart.update();
+
+            categoryInput.value = '';
+            valueInput.value = '';
+        });
+    });
+</script>
+
+</body>
+</html>

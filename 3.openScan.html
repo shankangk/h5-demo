@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫码功能</title>
+  </head>
+  <!-- <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script> -->
+  <script src="./html5-qrcode.min.js"></script>
+
+  <body>
+    <button onclick="startScan()">开启扫码</button>
+    <div id="reader"></div>
+
+
+  </body>
+</html>
+<script>
+  var html5QrcodeScanner = null;
+
+  function startScan() {
+    // 确保每次点击按钮时，只创建一个扫描器实例
+    if (!html5QrcodeScanner) {
+      html5QrcodeScanner = new Html5QrcodeScanner(
+        'reader', // HTML元素的ID，用于放置扫描器
+        {
+          fps: 10,
+          qrbox: 250
+        } // 可选参数，例如设置帧率和扫描框大小
+      );
+
+      html5QrcodeScanner.render(onScanSuccess);
+    }
+  }
+
+  function onScanSuccess(qrCodeMessage) {
+    alert('扫描结果: ' + qrCodeMessage);
+    // 可以在这里处理扫描到的二维码内容
+  }
+</script>

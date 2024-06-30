@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>显示键盘</title>
+</head>
+<body>
+  <input type="text" id="myInput" />
+<button id="showKeyboard">显示键盘</button>
+<button id="hideKeyboard">隐藏键盘</button>
+  
+  <script>
+    document.getElementById('showKeyboard').addEventListener('click', function() {
+  document.getElementById('myInput').focus();
+});
+ 
+document.getElementById('hideKeyboard').addEventListener('click', function() {
+  document.getElementById('myInput').blur();
+});
+  </script>
+</body>
+</html>

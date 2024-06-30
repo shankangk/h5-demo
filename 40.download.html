@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button onclick="downloadFile()">下载文本文件</button>
+
+<script>
+function downloadFile() {
+    // 生成文件内容
+    const content = "这是要写入文件的内容。";
+    
+    // 创建 Blob 对象
+    const blob = new Blob([content], { type: 'text/plain' });
+    
+    // 创建下载链接
+    const url = URL.createObjectURL(blob);
+    
+    // 创建 <a> 元素并设置下载属性
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'filename.txt';
+    
+    // 将 <a> 元素添加到文档中，并触发点击事件进行下载
+    document.body.appendChild(a);
+    a.click();
+    
+    // 清理 URL 对象
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>

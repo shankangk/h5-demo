@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复制文字到剪贴板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>点击按钮复制文本到剪贴板</h2>
+    <button id="copyTextBtn">复制文本</button>
+    <p class="message" id="message"></p>
+</div>
+
+<script>
+    const copyTextBtn = document.getElementById('copyTextBtn');
+    const messageElem = document.getElementById('message');
+
+    copyTextBtn.addEventListener('click', () => {
+        const textToCopy = '这是要复制的文本内容。'; // 替换为要复制的实际文本内容
+
+        // 创建一个临时的 textarea 元素
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        textarea.setAttribute('readonly', ''); // 设置为只读以防止移动端自动弹出键盘
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px'; // 移出屏幕外
+        document.body.appendChild(textarea);
+
+        // 选中并复制文本
+        textarea.select();
+        const copied = document.execCommand('copy');
+
+        // 移除临时 textarea 元素
+        document.body.removeChild(textarea);
+
+        // 显示复制成功或失败消息
+        if (copied) {
+            messageElem.textContent = '文本已成功复制到剪贴板！';
+        } else {
+            messageElem.textContent = '复制失败，请手动复制文本。';
+        }
+    });
+</script>
+
+</body>
+</html>

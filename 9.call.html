@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拨打电话示例</title>
+</head>
+<body>
+
+<!-- 拨打电话的按钮 -->
+<button onclick="callPhoneNumber('+123456789')">拨打电话</button>
+
+<script>
+function callPhoneNumber(phoneNumber) {
+  window.location.href = 'tel:' + phoneNumber;
+}
+</script>
+
+</body>
+</html>

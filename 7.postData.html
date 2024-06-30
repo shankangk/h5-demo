@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>POST接口请求示例</title>
+</head>
+<body>
+  <button onclick="postData()">发送POST请求</button>
+  <div id="result"></div>
+
+  <script>
+    function postData() {
+      // 定义POST接口请求的URL
+      var apiUrl = 'https://example.com/api/post'; // 替换为你的接口URL
+
+      // 定义POST请求的数据
+      var postData = {
+        key1: 'value1',
+        key2: 'value2'
+      };
+
+      // 使用 Fetch API 发起 POST 请求
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('网络请求出错');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // 从返回的数据中获取URL
+          var urlFromData = data.url; // 假设接口返回的数据结构中有一个url字段
+          
+          // 在页面上显示获取的URL
+          var resultElement = document.getElementById('result');
+          resultElement.innerHTML = `从接口获取的URL是：<a href="${urlFromData}" target="_blank">${urlFromData}</a>`;
+        })
+        .catch(error => {
+          console.error('发生错误：', error);
+          var resultElement = document.getElementById('result');
+          resultElement.textContent = 'POST请求失败';
+        });
+    }
+  </script>
+</body>
+</html>

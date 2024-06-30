@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>选择图片并回显</title>
+<style>
+  #preview {
+    max-width: 100%;
+    max-height: 300px;
+    display: block;
+    margin: 10px auto;
+  }
+</style>
+</head>
+<body>
+  <button onclick="chooseFile()">选择图片</button>
+  <input type="file" accept="image/*"  multiple id="fileInput" style="display: none;" onchange="previewImage(event)">
+  <img id="preview" src="#" alt="预览1图像">
+  
+  <script>
+    function chooseFile() {
+      var fileInput = document.getElementById('fileInput');
+      fileInput.click();
+    }
+
+    function previewImage(event) {
+      var input = event.target;
+      var preview = document.getElementById('preview');
+      
+      var file = input.files[0];
+      var reader = new FileReader();
+      
+      reader.onload = function() {
+        preview.src = reader.result;
+      }
+      
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+</body>
+</html>

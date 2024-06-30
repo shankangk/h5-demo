@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择视频示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        label:hover {
+            background-color: #0056b3;
+        }
+        #selectedVideo {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        video {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>选择视频</h2>
+    <input type="file" id="videoInput" accept="video/*">
+    <label for="videoInput">选择视频文件</label>
+    <p id="selectedVideo">未选择视频</p>
+    <video id="videoPlayer" controls style="display: none;"></video>
+</div>
+
+<script>
+    const videoInput = document.getElementById('videoInput');
+    const selectedVideoElem = document.getElementById('selectedVideo');
+    const videoPlayer = document.getElementById('videoPlayer');
+
+    videoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const videoURL = URL.createObjectURL(file);
+            selectedVideoElem.textContent = `已选择视频: ${file.name}`;
+            videoPlayer.src = videoURL;
+            videoPlayer.style.display = 'block';
+        } else {
+            selectedVideoElem.textContent = '未选择视频';
+            videoPlayer.src = '';
+            videoPlayer.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>

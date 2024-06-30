@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LocalStorage 示例</title>
+</head>
+<body>
+
+<input type="text" id="dataInput" placeholder="输入一些数据">
+<button onclick="saveData()">保存数据到LocalStorage</button>
+<button onclick="loadData()">从LocalStorage加载数据</button>
+
+<p id="output"></p>
+
+<script>
+function saveData() {
+  const data = document.getElementById('dataInput').value;
+  localStorage.setItem('myData', data);
+  alert('数据已保存到LocalStorage');
+}
+
+function loadData() {
+  const data = localStorage.getItem('myData');
+  document.getElementById('output').textContent = data ? `从LocalStorage加载的数据: ${data}` : '没有找到保存的数据';
+}
+</script>
+
+</body>
+</html>
