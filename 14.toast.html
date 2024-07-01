@@ -1,43 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>移动端Toast提示示例</title>
-<style>
-  .toast {
-    display: none;
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    z-index: 9999;
-  }
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端Toast提示示例</title>
+    <style>
+      .toast {
+        display: none;
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        z-index: 9999;
+      }
 
-<div id="toast" class="toast"></div>
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
 
-<button onclick="showToast()">显示Toast提示</button>
+    <button onclick="showToast('这是一个Toast提示消息', 3000)" class="btn">显示Toast提示</button>
 
-<script>
-function showToast() {
-  const toast = document.getElementById('toast');
-  toast.textContent = '这是一个Toast提示消息';
-  toast.style.display = 'block';
+    <script>
+      function showToast(message, duration) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
 
-  // 3秒后隐藏Toast提示
-  setTimeout(function() {
-    toast.style.display = 'none';
-  }, 3000); // 3000毫秒后隐藏
-}
-</script>
+        toast.style.display = 'block';
+        setTimeout(() => {
+          toast.style.display = 'none';
+          document.body.removeChild(toast);
+        }, duration);
+      }
+    </script>
 
-</body>
+  </body>
 </html>

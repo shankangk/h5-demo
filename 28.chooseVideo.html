@@ -1,76 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>选择视频示例</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-        }
-        input[type="file"] {
-            display: none;
-        }
-        label {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 4px;
-            display: inline-block;
-        }
-        label:hover {
-            background-color: #0056b3;
-        }
-        #selectedVideo {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        video {
-            max-width: 100%;
-            margin-top: 20px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+        display: inline-block;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #selectedVideo {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+
+      video {
+        max-width: 100%;
+        margin-top: 20px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
 
-<div class="container">
-    <h2>选择视频</h2>
-    <input type="file" id="videoInput" accept="video/*">
-    <label for="videoInput">选择视频文件</label>
-    <p id="selectedVideo">未选择视频</p>
-    <video id="videoPlayer" controls style="display: none;"></video>
-</div>
+    <div class="container">
+      <button id="selectVideoBtn">选择视频文件</button>
+    </div>
 
-<script>
-    const videoInput = document.getElementById('videoInput');
-    const selectedVideoElem = document.getElementById('selectedVideo');
-    const videoPlayer = document.getElementById('videoPlayer');
+    <script>
+      function createVideoSelector(buttonId, acceptTypes = ['video/*']) {
+        const button = document.getElementById(buttonId);
 
-    videoInput.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.style.display = 'none';
+        fileInput.accept = acceptTypes.join(','); // 设置视频文件类型
+
+        // 创建展示信息
+        const selectedVideoElem = document.createElement('p');
+        selectedVideoElem.id = 'selectedVideo';
+        selectedVideoElem.textContent = '未选择视频';
+
+        // 创建video元素用于播放视频
+        const videoPlayer = document.createElement('video');
+        videoPlayer.id = 'videoPlayer';
+        videoPlayer.controls = true;
+        videoPlayer.style.display = 'none';
+
+        // 展示信息
+        document.body.appendChild(selectedVideoElem);
+        document.body.appendChild(videoPlayer);
+
+        // 监听文件选择事件
+        fileInput.addEventListener('change', function() {
+          const file = this.files[0];
+          if (file) {
             const videoURL = URL.createObjectURL(file);
             selectedVideoElem.textContent = `已选择视频: ${file.name}`;
             videoPlayer.src = videoURL;
             videoPlayer.style.display = 'block';
-        } else {
+          } else {
             selectedVideoElem.textContent = '未选择视频';
             videoPlayer.src = '';
             videoPlayer.style.display = 'none';
-        }
-    });
-</script>
+          }
+        });
 
-</body>
+        // 绑定按钮点击事件，触发文件选择
+        button.addEventListener('click', function() {
+          fileInput.click();
+        });
+      }
+
+      // 调用函数
+      createVideoSelector('selectVideoBtn');
+    </script>
+
+  </body>
 </html>

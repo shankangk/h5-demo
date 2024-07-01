@@ -1,17 +1,41 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>HTML5 列表选择示例</title>
-</head>
-<body>
- 
-<input list="myItems" name="myItem" />
-<datalist id="myItems">
-  <option value="Item1">
-  <option value="Item2">
-  <option value="Item3">
-  <option value="Item4">
-</datalist>
- 
-</body>
+  <head>
+    <title>HTML5 列表选择示例</title>
+  </head>
+  <body>
+
+    <div id="listContainer"></div>
+
+    <script>
+      function createDropdown(containerId, inputName, options) {
+        const container = document.getElementById(containerId);
+
+        if (!container) {
+          console.error(`Container with id "${containerId}" not found.`);
+          return;
+        }
+
+        const input = document.createElement('input');
+        input.setAttribute('list', `${inputName}List`);
+        input.setAttribute('name', inputName);
+
+        const dataList = document.createElement('datalist');
+        dataList.id = `${inputName}List`;
+
+        options.forEach(optionValue => {
+          const option = document.createElement('option');
+          option.value = optionValue;
+          dataList.appendChild(option);
+        });
+
+        container.appendChild(input);
+        container.appendChild(dataList);
+      }
+
+      // 使用示例
+      createDropdown('listContainer', 'myItem', ['Item1', 'Item2', 'Item3', 'Item4']);
+    </script>
+
+  </body>
 </html>

@@ -1,99 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>底部弹出日期时间选择器</title>
-<style>
-  /* 遮罩层样式 */
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
-    z-index: 1000; /* 确保遮罩在最上层 */
-    display: none; /* 初始隐藏 */
-  }
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>底部弹出日期时间选择器</title>
+    <style>
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: none;
+      }
 
-  /* 选择器容器样式 */
-  .datetime-picker {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ffffff;
-    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1); /* 底部阴影效果 */
-    padding: 20px;
-    box-sizing: border-box;
-    transform: translateY(100%); /* 初始隐藏位置在底部之外 */
-    transition: transform 0.3s ease-out; /* 使用过渡效果 */
-    z-index: 1001; /* 确保选择器在遮罩之上 */
-  }
+      .datetime-picker {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        box-sizing: border-box;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+        z-index: 1001;
+      }
 
-  /* 显示选择器的动画效果 */
-  .datetime-picker.show {
-    transform: translateY(0);
-  }
+      .datetime-picker.show {
+        transform: translateY(0);
+      }
 
-  /* 按钮样式 */
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    text-align: center;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
 
-  /* 输入框样式 */
-  input[type="datetime-local"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-</style>
-</head>
-<body>
+      input[type="datetime-local"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
 
-<!-- 遮罩层 -->
-<div class="overlay" id="overlay"></div>
+    <button class="btn" onclick="showDateTimePicker()">选择日期时间</button>
 
-<!-- 日期时间选择器 -->
-<div class="datetime-picker" id="datetimePicker">
-  <label for="datetime">选择日期时间:</label>
-  <input type="datetime-local" id="datetime" name="datetime">
+    <script>
+      function createDateTimePicker() {
+        var overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        overlay.id = 'overlay';
+        document.body.appendChild(overlay);
 
-  <!-- 取消按钮 -->
-  <button class="btn" onclick="hideDateTimePicker()">取消</button>
-</div>
+        var picker = document.createElement('div');
+        picker.className = 'datetime-picker';
+        picker.id = 'datetimePicker';
 
-<!-- 打开日期时间选择器的按钮 -->
-<button class="btn" onclick="showDateTimePicker()">选择日期时间</button>
+        var label = document.createElement('label');
+        label.setAttribute('for', 'datetime');
+        label.innerText = '选择日期时间:';
+        picker.appendChild(label);
 
-<script>
-  var overlay = document.getElementById('overlay');
-  var datetimePicker = document.getElementById('datetimePicker');
+        var input = document.createElement('input');
+        input.type = 'datetime-local';
+        input.id = 'datetime';
+        input.name = 'datetime';
+        picker.appendChild(input);
 
-  function showDateTimePicker() {
-    overlay.style.display = 'block';
-    datetimePicker.classList.add('show');
-  }
+        var button = document.createElement('button');
+        button.className = 'btn';
+        button.innerText = '取消';
+        button.onclick = hideDateTimePicker;
+        picker.appendChild(button);
 
-  function hideDateTimePicker() {
-    overlay.style.display = 'none';
-    datetimePicker.classList.remove('show');
-  }
-</script>
+        document.body.appendChild(picker);
+      }
 
-</body>
+      function showDateTimePicker() {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('datetimePicker').classList.add('show');
+      }
+
+      function hideDateTimePicker() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('datetimePicker').classList.remove('show');
+      }
+
+      createDateTimePicker();
+    </script>
+
+  </body>
 </html>

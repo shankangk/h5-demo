@@ -1,39 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>语音识别示例</title>
-</head>
-<body>
-  <button onclick="startRecognition()">开始语音识别</button>
-  <button onclick="stopRecognition()">停止语音识别</button>
-  
-  <script>
-    var recognition = new webkitSpeechRecognition() || new SpeechRecognition();
-    recognition.lang = 'zh-CN';
+  <head>
+    <title>语音识别示例</title>
+  </head>
+  <body>
+    <button onclick="speechRecognition.start()">开始语音识别</button>
+    <button onclick="speechRecognition.stop()">停止语音识别</button>
 
-    recognition.onresult = function(event) {
-      var transcript = event.results[0][0].transcript;
-      console.log('识别结果：', transcript);
-      // 在这里可以进一步处理识别结果，例如显示在页面上
-    };
+    <script>
+      function initSpeechRecognition(onResultCallback, onErrorCallback) {
+        const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'zh-CN';
 
-    recognition.onend = function() {
-      console.log('语音识别结束。');
-    };
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          if (onResultCallback) onResultCallback(transcript);
+        };
 
-    recognition.onerror = function(event) {
-      console.error('语音识别错误：', event.error);
-    };
+        recognition.onerror = function(event) {
+          if (onErrorCallback) onErrorCallback(event.error);
+        };
 
-    function startRecognition() {
-      recognition.start();
-      console.log('开始语音识别。');
-    }
+        return {
+          start: () => {
+            recognition.start();
+            console.log('开始语音识别。');
+          },
+          stop: () => {
+            recognition.stop();
+            console.log('停止语音识别。');
+          }
+        };
+      }
 
-    function stopRecognition() {
-      recognition.stop();
-      console.log('停止语音识别。');
-    }
-  </script>
-</body>
+      // 使用
+      const speechRecognition = initSpeechRecognition(
+        transcript => console.log('识别结果：', transcript),
+        error => console.error('语音识别错误：', error)
+      );
+    </script>
+  </body>
 </html>

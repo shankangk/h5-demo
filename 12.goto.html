@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>移动端页面跳转示例</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端页面跳转示例</title>
+  </head>
+  <body>
 
-<button onclick="redirectToAnotherPage()">点击跳转到另一个页面</button>
+    <button onclick="redirectToAnotherPage('0.getPicture.html')">点击跳转到另一个页面</button>
 
-<script>
-function redirectToAnotherPage() {
-  // 使用 window.location.href 实现页面跳转
-  // window.location.href = 'https://example.com';
-  window.location.href = '0.getPicture.html';
-}
-</script>
+    <script>
+      function redirectToAnotherPage(url) {
+        window.location.href = url;
+      }
+    </script>
 
-</body>
+  </body>
 </html>

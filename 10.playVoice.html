@@ -1,13 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>播放声音示例</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播放声音示例</title>
+    <style>
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
 
-<audio id="audioElement" src="path_to_your_audio_file.mp3" controls></audio>
+    <button onclick="playSound('https://www.xxx.com/file.mp3')" class="btn">播放声音</button>
 
-</body>
+    <script>
+      function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(error => console.error('播放声音失败：', error));
+      }
+    </script>
+
+  </body>
 </html>

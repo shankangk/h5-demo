@@ -1,75 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>抢单功能示例</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 4px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .message {
-            margin-top: 20px;
-            font-size: 18px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
 
-<div class="container">
-    <h2>点击按钮进行抢单</h2>
-    <button id="grabOrderBtn">抢单</button>
-    <p class="message" id="message"></p>
-</div>
+    <div class="container">
+      <button onclick="grabOrder()" id="grabOrderBtn">抢单</button>
+    </div>
 
-<script>
-    const grabOrderBtn = document.getElementById('grabOrderBtn');
-    const messageElem = document.getElementById('message');
-
-    grabOrderBtn.addEventListener('click', () => {
-        fetch('https://jsonplaceholder.typicode.com/posts/1', { // 使用 JSONPlaceholder 模拟接口请求
-            method: 'PUT', // 使用 PUT 方法模拟抢单请求
+    <script>
+      function grabOrder() {
+        fetch('https://xxxxx', { // 接口请求
+            method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userId: 1,
-                id: 1,
-                title: '抢单请求',
-                body: '这是一个抢单请求示例'
+              userId: 1,
+              id: 1,
             })
-        })
-        .then(response => response.json())
-        .then(data => {
+          })
+          .then(response => response.json())
+          .then(data => {
             // 假设接口返回成功的情况
-            messageElem.textContent = '抢单成功！订单详情：' + JSON.stringify(data);
-        })
-        .catch(error => {
+            alert('抢单成功！订单详情：' + JSON.stringify(data));
+          })
+          .catch(error => {
             console.error('抢单失败:', error);
-            messageElem.textContent = '抢单失败，请重试！';
-        });
-    });
-</script>
+            alert('抢单失败，请重试！');
+          });
+      }
+    </script>
 
-</body>
+  </body>
 </html>

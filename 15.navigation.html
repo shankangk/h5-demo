@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>获取当前经纬度信息示例</title>
-</head>
-<body>
-  <button onclick="getLocation()">获取位置信息</button>
-  <p id="location">位置信息将显示在这里</p>
-  
-  <script>
-    function getLocation() {
-        if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
-        } else {
-            alert('抱歉，您的浏览器不支持获取地理位置信息。');
-        }
-    }
+  <head>
+    <title>获取当前经纬度信息示例</title>
+  </head>
+  <body>
+    <button onclick="getLocation()">获取位置信息</button>
+    <p id="location">位置信息将显示在这里</p>
 
-    function successCallback(position) {
+    <script>
+      function getLocation() {
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+        } else {
+          alert('抱歉，您的浏览器不支持获取地理位置信息。');
+        }
+      }
+
+      function successCallback(position) {
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
         var accuracy = position.coords.accuracy;
@@ -38,11 +38,11 @@
         `;
 
         document.getElementById('location').innerHTML = locationInfo;
-    }
+      }
 
-    function errorCallback(error) {
+      function errorCallback(error) {
         console.error('获取位置信息失败：', error.message);
-    }
-  </script>
-</body>
+      }
+    </script>
+  </body>
 </html>

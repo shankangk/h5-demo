@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title id="pageTitle">初始标题</title>
-</head>
-<body>
-  <button onclick="updateTitle()">更新标题</button>
+  <head>
+    <title>初始标题</title>
+  </head>
+  <body>
+    <button onclick="updateTitle('新的title')">更新标题</button>
 
-  <script>
-    function updateTitle() {
-      var newTitle = "新的页面标题";
-      document.getElementById("pageTitle").innerText = newTitle;
-    }
-  </script>
-</body>
+    <script>
+      function updateTitle(title) {
+        document.title = title
+      }
+    </script>
+  </body>
 </html>

@@ -1,34 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>根据路径打开图片</title>
-<style>
-  #preview {
-    max-width: 100%;
-    max-height: 300px;
-    display: block;
-    margin: 10px auto;
-  }
-</style>
-</head>
-<body>
-  <input type="text" id="imagePath" placeholder="输入图片路径">
-  <button onclick="openImage()">打开图片</button>
-  <img id="preview" src="#" alt="预览图像">
-  
-  <script>
-    function openImage() {
-      var imagePath = document.getElementById('imagePath').value.trim();
-      var preview = document.getElementById('preview');
-      
-      if (imagePath) {
-        preview.src = imagePath;
-      } else {
-        alert("请输入有效的图片路径。");
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>根据路径打开图片</title>
+  </head>
+  <body>
+    <button onclick="openImage()">打开图片</button>
+    <img width="200px" id="preview" src="#" alt="预览图像">
+
+    <script>
+      function openImage(src) {
+        var preview = document.getElementById('preview');
+        if (src) {
+          preview.src = src;
+        } else {
+          alert("请输入有效的图片路径。");
+        }
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>

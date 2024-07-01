@@ -1,44 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>文件上传示例</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传示例</title>
+  </head>
+  <body>
 
-<input type="file" id="fileInput">
-<button onclick="uploadFile()">上传文件</button>
+    <button onclick="triggerFileUpload()">选择并上传文件</button>
 
-<script>
-function uploadFile() {
-  const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0];
+    <script>
+      function triggerFileUpload() {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
 
-  if (file) {
-    const formData = new FormData();
-    formData.append('file', file);
+        fileInput.addEventListener('change', function() {
+          const file = fileInput.files[0];
 
-    fetch('https://example.com/upload', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => {
-      if (response.ok) {
-        alert('文件上传成功');
-      } else {
-        alert('文件上传失败');
+          if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('接口地址', {
+                method: 'POST',
+                body: formData
+              })
+              .then(response => {
+                if (response.ok) {
+                  alert('文件上传成功');
+                } else {
+                  alert('文件上传失败');
+                }
+              })
+              .catch(error => {
+                console.error('文件上传失败：', error);
+                alert('文件上传失败');
+              })
+              .finally(() => {
+                document.body.removeChild(fileInput);
+              });
+          } else {
+            alert('请选择要上传的文件');
+            document.body.removeChild(fileInput);
+          }
+        });
+
+        fileInput.click();
       }
-    })
-    .catch(error => {
-      console.error('文件上传失败：', error);
-      alert('文件上传失败');
-    });
-  } else {
-    alert('请选择要上传的文件');
-  }
-}
-</script>
+    </script>
 
-</body>
+  </body>
 </html>

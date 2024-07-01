@@ -1,36 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>打开视频示例</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-        }
-        video {
-            max-width: 100%;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+        margin: 0;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+        display: inline-block;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      video {
+        max-width: 100%;
+        display: block;
+        margin-top: 20px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
 
-<div class="container">
-    <h2>打开视频</h2>
-    <video controls autoplay>
-        <source src="example.mp4" type="video/mp4">
-        <!-- 支持添加其他视频格式，如 <source src="example.webm" type="video/webm"> -->
-        Your browser does not support the video tag.
-    </video>
-</div>
+    <button onclick="openVideo('xxx','title')">打开视频</button>
 
-</body>
+    <script>
+      function openVideo(videoURL, videoTitle = '视频播放器') {
+        // 创建一个 video 元素
+        const videoPlayer = document.createElement('video');
+        videoPlayer.controls = true;
+        videoPlayer.style.maxWidth = '100%';
+        videoPlayer.src = videoURL;
+
+        // 创建一个标题元素 可以删除
+        const title = document.createElement('h2');
+        title.textContent = videoTitle;
+
+        document.body.appendChild(title);
+        document.body.appendChild(videoPlayer);
+
+        // 播放视频
+        videoPlayer.play().catch(error => {
+          console.error('播放视频失败:', error);
+        });
+      }
+    </script>
+
+  </body>
 </html>

@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>选择图片并回显</title>
-<style>
-  #preview {
-    max-width: 100%;
-    max-height: 300px;
-    display: block;
-    margin: 10px auto;
-  }
-</style>
-</head>
-<body>
-  <button onclick="chooseFile()">选择图片</button>
-  <input type="file" accept="image/*"  multiple id="fileInput" style="display: none;" onchange="previewImage(event)">
-  <img id="preview" src="#" alt="预览1图像">
-  
-  <script>
-    function chooseFile() {
-      var fileInput = document.getElementById('fileInput');
-      fileInput.click();
-    }
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择图片并回显</title>
+  </head>
+  <body>
+    <div id="uploadDiv">点击上传图片</div>
+    <img width="200px" id="preview" src="" alt="预览图片">
 
-    function previewImage(event) {
-      var input = event.target;
-      var preview = document.getElementById('preview');
-      
-      var file = input.files[0];
-      var reader = new FileReader();
-      
-      reader.onload = function() {
-        preview.src = reader.result;
+    <script>
+      function uploadAndPreview(divId, previewId) {
+        const uploadDiv = document.getElementById(divId);
+        const previewImage = document.getElementById(previewId);
+
+        uploadDiv.addEventListener('click', function() {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.style.display = 'none';
+
+          fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                previewImage.src = e.target.result;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+
+          document.body.appendChild(fileInput);
+          fileInput.click();
+          document.body.removeChild(fileInput);
+        });
       }
-      
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-    }
-  </script>
-</body>
+
+      // 调用传入id
+      uploadAndPreview('uploadDiv', 'preview');
+    </script>
+  </body>
 </html>

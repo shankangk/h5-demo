@@ -1,21 +1,37 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>显示键盘</title>
-</head>
-<body>
-  <input type="text" id="myInput" />
-<button id="showKeyboard">显示键盘</button>
-<button id="hideKeyboard">隐藏键盘</button>
-  
-  <script>
-    document.getElementById('showKeyboard').addEventListener('click', function() {
-  document.getElementById('myInput').focus();
-});
- 
-document.getElementById('hideKeyboard').addEventListener('click', function() {
-  document.getElementById('myInput').blur();
-});
-  </script>
-</body>
+  <head>
+    <title>显示键盘</title>
+  </head>
+  <body>
+    <button onclick="keyboardController.show()">显示键盘</button>
+    <button onclick="keyboardController.hide()">隐藏键盘</button>
+
+    <script>
+      const keyboardController = {
+        show: function() {
+          const input = document.createElement('input');
+          input.style.position = 'absolute';
+          input.style.left = '-9999px';
+          document.body.appendChild(input);
+          input.focus();
+          setTimeout(() => {
+            // 移除这个输入框
+            document.body.removeChild(input);
+          }, 100); // 确保键盘显示
+        },
+        hide: function() {
+          const input = document.createElement('input');
+          input.style.position = 'absolute';
+          input.style.left = '-9999px';
+          document.body.appendChild(input);
+          input.focus();
+          setTimeout(() => {
+            // 移除这个输入框
+            document.body.removeChild(input);
+          }, 100); // 确保键盘隐藏
+        }
+      };
+    </script>
+  </body>
 </html>
