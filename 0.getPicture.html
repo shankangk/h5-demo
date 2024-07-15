@@ -1,44 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>选择图片并回显</title>
-  </head>
-  <body>
-    <div id="uploadDiv">点击上传图片</div>
-    <img width="200px" id="preview" src="" alt="预览图片">
 
-    <script>
-      function uploadAndPreview(divId, previewId) {
-        const uploadDiv = document.getElementById(divId);
-        const previewImage = document.getElementById(previewId);
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>选择图片并回显</title>
+</head>
 
-        uploadDiv.addEventListener('click', function() {
-          const fileInput = document.createElement('input');
-          fileInput.type = 'file';
-          fileInput.accept = 'image/*';
-          fileInput.style.display = 'none';
+<body>
+  <div id="uploadDiv">点击上传图片</div>
+  <img width="200px" id="preview" src="" alt="预览图片">
 
-          fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = function(e) {
-                previewImage.src = e.target.result;
-              };
-              reader.readAsDataURL(file);
-            }
-          });
+  <script src="./h5.js"></script>
+  <script>
+    h5.uploadAndPreview('uploadDiv', 'preview');
+  </script>
+</body>
 
-          document.body.appendChild(fileInput);
-          fileInput.click();
-          document.body.removeChild(fileInput);
-        });
-      }
-
-      // 调用传入id
-      uploadAndPreview('uploadDiv', 'preview');
-    </script>
-  </body>
 </html>
