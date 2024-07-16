@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>移动端Toast提示示例</title>
-    <style>
-      .toast {
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>移动端Toast提示示例</title>
+  <style>
+    /* .toast {
         display: none;
         position: fixed;
         top: 20%;
@@ -17,40 +18,32 @@
         border-radius: 5px;
         font-size: 16px;
         z-index: 9999;
-      }
+      } */
 
-      .btn {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        text-align: center;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      text-align: center;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <script src="./h5.js"></script>
 
-    <button onclick="showToast('这是一个Toast提示消息', 3000)" class="btn">显示Toast提示</button>
+</head>
 
-    <script>
-      function showToast(message, duration) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = message;
-        document.body.appendChild(toast);
+<body>
 
-        toast.style.display = 'block';
-        setTimeout(() => {
-          toast.style.display = 'none';
-          document.body.removeChild(toast);
-        }, duration);
-      }
-    </script>
+  <button onclick="h5.toast('这是一个Toast提示消息', 3000)" class="btn">显示Toast提示</button>
 
-  </body>
+  <script>
+  </script>
+
+</body>
+
 </html>

@@ -1,88 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>本地录音示例</title>
-    <style>
-      .btn {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        text-align: center;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
 
-      .btn:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-      }
-    </style>
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>本地录音示例</title>
+  <style>
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      text-align: center;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-    <button id="startRecording" class="btn">开始录音</button>
-    <button id="stopRecording" class="btn" disabled>停止录音</button>
-    <button id="playRecording" class="btn" style="display: none;">播放录音</button>
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
 
-    <script>
-      function setupRecording() {
-        let mediaRecorder;
-        let chunks = [];
+<body>
 
-        const startRecordingButton = document.getElementById('startRecording');
-        const stopRecordingButton = document.getElementById('stopRecording');
-        const playRecordingButton = document.getElementById('playRecording');
+  <button id="startRecording" class="btn">开始录音</button>
+  <button id="stopRecording" class="btn" disabled>停止录音</button>
+  <button id="playRecording" class="btn" style="display: none;">播放录音</button>
 
-        let audioElement;
+  <script src="./h5.js"></script>
+  <script>
+    h5.setupRecording('startRecording', 'stopRecording', 'playRecording');
+  </script>
 
-        startRecordingButton.addEventListener('click', () => {
-          navigator.mediaDevices.getUserMedia({
-              audio: true
-            })
-            .then(stream => {
-              mediaRecorder = new MediaRecorder(stream);
+</body>
 
-              mediaRecorder.ondataavailable = event => chunks.push(event.data);
-              mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks, {
-                  type: 'audio/wav'
-                });
-                chunks = [];
-                if (!audioElement) {
-                  audioElement = document.createElement('audio');
-                }
-                audioElement.src = URL.createObjectURL(blob);
-                playRecordingButton.style.display = 'block';
-              };
-
-              mediaRecorder.start();
-              startRecordingButton.disabled = true;
-              stopRecordingButton.disabled = false;
-            })
-            .catch(err => console.error('录音失败：', err));
-        });
-
-        stopRecordingButton.addEventListener('click', () => {
-          mediaRecorder.stop();
-          startRecordingButton.disabled = false;
-          stopRecordingButton.disabled = true;
-        });
-
-        playRecordingButton.addEventListener('click', () => {
-          if (audioElement) {
-            audioElement.play();
-          }
-        });
-      }
-
-      setupRecording();
-    </script>
-
-  </body>
 </html>
