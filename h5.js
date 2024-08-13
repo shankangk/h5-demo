@@ -1,4 +1,36 @@
 const h5 = {
+  /**
+   * 图片添加水印
+   * @param {string} imageSrc 图片地址
+   * @param {Array} watermarks 水印数组对象，每个元素包含水印的属性 如：text文字, x距离左边距离, y距离顶部距离, font字体样式, color字体颜色, textAlign, textBaseline
+   * @param {Function} callback 回调函数，返回添加水印后的图片地址
+   * */
+  // addWatermarkToImage(imageUrl, watermarks, function(watermarkedImageUrl) {
+  //   console.log(watermarkedImageUrl);
+  // });
+  addWatermarkToImage: function (imageSrc, watermarks, callback) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous'; // 防止图片不同源
+    img.onload = function () {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      watermarks.forEach((watermark) => {
+        ctx.font = watermark.font || '20px';
+        ctx.fillStyle = watermark.color || 'rgba(255, 255, 255, 0.5)';
+        ctx.textAlign = watermark.textAlign || 'left';
+        ctx.textBaseline = watermark.textBaseline || 'bottom';
+        ctx.fillText(watermark.text, watermark.x || 20, watermark.y || canvas.height - 20);
+      });
+
+      const watermarkedImage = canvas.toDataURL('image/png');
+      callback(watermarkedImage);
+    };
+    img.src = imageSrc;
+  },
   // 选择图片并回显 传入上传按钮id以及需要预览的盒子的id
   uploadAndPreview: function (uploadId, previewId) {
     const uploadDiv = document.getElementById(uploadId);
