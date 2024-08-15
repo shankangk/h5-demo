@@ -1,4 +1,63 @@
 const h5 = {
+  // loading.open('提示信息') 默认显示 请稍后...
+  // loading.close()
+  loading: {
+    open: function (message = "请稍等...") {
+      const overlay = document.createElement('div');
+      overlay.id = 'loading-overlay';
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = 'center';
+      overlay.style.alignItems = 'center';
+      overlay.style.flexDirection = 'column';
+      overlay.style.zIndex = '9999';
+
+      // 转圈
+      const spinner = document.createElement('div');
+      spinner.style.border = '5px solid #f3f3f3';
+      spinner.style.borderTop = '5px solid #3498db';
+      spinner.style.borderRadius = '50%';
+      spinner.style.width = '20px';
+      spinner.style.height = '20px';
+      spinner.style.animation = 'spin 2s linear infinite';
+
+      // 提示文字
+      const messageDiv = document.createElement('div');
+      messageDiv.innerText = message;
+      messageDiv.style.marginTop = '15px';
+      messageDiv.style.color = '#fff';
+      messageDiv.style.fontSize = '16px';
+      messageDiv.style.textAlign = 'center';
+
+      overlay.appendChild(spinner);
+      overlay.appendChild(messageDiv);
+
+      document.body.appendChild(overlay);
+
+      const style = document.createElement('style');
+      style.type = 'text/css';
+      const keyframes = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+      style.innerHTML = keyframes;
+      document.head.appendChild(style);
+    },
+
+    close: function () {
+      const overlay = document.getElementById('loading-overlay');
+      if (overlay) {
+        document.body.removeChild(overlay);
+      }
+    }
+  },
   /**
    * 图片添加水印
    * @param {string} imageSrc 图片地址
