@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>视频压缩</title>
+	<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js"></script>
+</head>
+
+<body>
+	<input type="file" id="video" accept="video/*">
+	<script>
+		async function compressVideo(inputFile, callback) {
+			const { createFFmpeg, fetchFile } = FFmpeg;
+			const ffmpeg = createFFmpeg({ log: true });
+
+			try {
+				await ffmpeg.load();
+				ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(inputFile));
+				await ffmpeg.run('-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4');
+				const data = ffmpeg.FS('readFile', 'output.mp4');
+				const compressedBlob = new Blob([data.buffer], { type: 'video/mp4' });
+				callback(compressedBlob);
+			} catch (error) {
+				console.error('视频压缩失败:', error);
+			}
+		}
+
+		document.getElementById('video').addEventListener('change', (event) => {
+			const selectedFile = event.target.files[0];
+			// 压缩视频
+			compressVideo(selectedFile, async (compressedBlob) => {
+				console.log('压缩后的视频流', compressedBlob);
+			});
+		});
+	</script>
+</body>
+
+</html>
