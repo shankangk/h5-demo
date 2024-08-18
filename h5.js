@@ -1,8 +1,31 @@
 const h5 = {
+  /**
+   * 视频压缩 需要配合ffmpeg.min.js使用
+   * @param {string} inputFile 输入文件
+   * @param {function} callback 压缩完成后的回调函数，接收一个Blob对象作为参数
+   */
+  // compressVideo(selectedFile, async (compressedBlob) => {
+  // 	console.log('压缩后的视频流', compressedBlob);
+  // });
+  async compressVideo(inputFile, callback) {
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
+
+    try {
+      await ffmpeg.load();
+      ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(inputFile));
+      await ffmpeg.run('-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4');
+      const data = ffmpeg.FS('readFile', 'output.mp4');
+      const compressedBlob = new Blob([data.buffer], { type: 'video/mp4' });
+      callback(compressedBlob);
+    } catch (error) {
+      console.error('视频压缩失败:', error);
+    }
+  },
   // loading.open('提示信息') 默认显示 请稍后...
   // loading.close()
   loading: {
-    open: function (message = "请稍等...") {
+    open: function (message = '请稍等...') {
       const overlay = document.createElement('div');
       overlay.id = 'loading-overlay';
       overlay.style.position = 'fixed';
@@ -56,7 +79,7 @@ const h5 = {
       if (overlay) {
         document.body.removeChild(overlay);
       }
-    }
+    },
   },
   /**
    * 图片添加水印
