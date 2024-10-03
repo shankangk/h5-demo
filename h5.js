@@ -1,7 +1,7 @@
 const h5 = {
   // 百度地图弹窗选择地理位置
-  function openBaiduMapModal() {
-      const style = `
+  openBaiduMapModal() {
+    const style = `
         html, body {
             height: 100%;
             margin: 0;
@@ -79,125 +79,128 @@ const h5 = {
             background-color: #0056b3;
         }
     `;
-      const styleSheet = document.createElement("style");
-      styleSheet.type = "text/css";
-      styleSheet.innerText = style;
-      document.head.appendChild(styleSheet);
+    const styleSheet = document.createElement('style');
+    styleSheet.type = 'text/css';
+    styleSheet.innerText = style;
+    document.head.appendChild(styleSheet);
 
-      // 遮罩层
-      const modalOverlay = document.createElement('div');
-      modalOverlay.classList.add('modal-overlay');
+    // 遮罩层
+    const modalOverlay = document.createElement('div');
+    modalOverlay.classList.add('modal-overlay');
 
-      const mapContainer = document.createElement('div');
-      mapContainer.classList.add('map-container');
-      mapContainer.setAttribute('id', 'baiduMap');
+    const mapContainer = document.createElement('div');
+    mapContainer.classList.add('map-container');
+    mapContainer.setAttribute('id', 'baiduMap');
 
-      modalOverlay.appendChild(mapContainer);
-      document.body.appendChild(modalOverlay);
+    modalOverlay.appendChild(mapContainer);
+    document.body.appendChild(modalOverlay);
 
-      // 搜索输入框
-      const searchBox = document.createElement('input');
-      searchBox.classList.add('search-box');
-      searchBox.type = 'text';
-      searchBox.placeholder = '搜索地点';
-      modalOverlay.appendChild(searchBox);
+    // 搜索输入框
+    const searchBox = document.createElement('input');
+    searchBox.classList.add('search-box');
+    searchBox.type = 'text';
+    searchBox.placeholder = '搜索地点';
+    modalOverlay.appendChild(searchBox);
 
-      // 列表
-      const searchResultContainer = document.createElement('div');
-      searchResultContainer.classList.add('search-result');
-      searchResultContainer.style.display = 'none'; // 初始隐藏
-      modalOverlay.appendChild(searchResultContainer);
+    // 列表
+    const searchResultContainer = document.createElement('div');
+    searchResultContainer.classList.add('search-result');
+    searchResultContainer.style.display = 'none'; // 初始隐藏
+    modalOverlay.appendChild(searchResultContainer);
 
-      // 保存按钮
-      const saveButton = document.createElement('button');
-      saveButton.innerText = '确认选择';
-      saveButton.classList.add('save-button');
-      modalOverlay.appendChild(saveButton);
+    // 保存按钮
+    const saveButton = document.createElement('button');
+    saveButton.innerText = '确认选择';
+    saveButton.classList.add('save-button');
+    modalOverlay.appendChild(saveButton);
 
-      // 地图初始化
-      const map = new BMap.Map("baiduMap");
-      map.enableScrollWheelZoom(true);
+    // 地图初始化
+    const map = new BMap.Map('baiduMap');
+    map.enableScrollWheelZoom(true);
 
-      const geolocation = new BMap.Geolocation();
-      geolocation.getCurrentPosition(function (result) {
-        if (this.getStatus() === BMAP_STATUS_SUCCESS) {
-          const point = new BMap.Point(result.point.lng, result.point.lat);
-          map.centerAndZoom(point, 15);  // 设置地图中心为当前定位位置
-          const marker = new BMap.Marker(point);
-          map.addOverlay(marker);  // 在当前位置打点
+    const geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function (result) {
+      if (this.getStatus() === BMAP_STATUS_SUCCESS) {
+        const point = new BMap.Point(result.point.lng, result.point.lat);
+        map.centerAndZoom(point, 15); // 设置地图中心为当前定位位置
+        const marker = new BMap.Marker(point);
+        map.addOverlay(marker); // 在当前位置打点
 
-          let selectedLocation = { lng: result.point.lng, lat: result.point.lat };
+        let selectedLocation = { lng: result.point.lng, lat: result.point.lat };
 
-          // 点击选择位置
-          map.addEventListener("click", function (e) {
-            const { lng, lat } = e.point;
-            selectedLocation = { lng, lat };
-            console.log(`Selected Location: ${lng}, ${lat}`);
-            // 清除点 打点
-            map.clearOverlays();
-            const newMarker = new BMap.Marker(e.point);
-            map.addOverlay(newMarker);
-          });
+        // 点击选择位置
+        map.addEventListener('click', function (e) {
+          const { lng, lat } = e.point;
+          selectedLocation = { lng, lat };
+          console.log(`Selected Location: ${lng}, ${lat}`);
 
-          // 保存按钮事件
-          saveButton.addEventListener('click', function () {
-            if (selectedLocation) {
-              console.log('保存的地理位置:', selectedLocation);
-              document.body.removeChild(modalOverlay);
-              return selectedLocation;
-            } else {
-              alert("请选择一个位置！");
-            }
-          });
+          // 清除现有的点
+          map.clearOverlays();
 
-        } else {
-          alert('无法获取当前位置');
-        }
-      });
+          // 添加新的Marker
+          const newMarker = new BMap.Marker(e.point);
+          map.addOverlay(newMarker); // 添加默认标记
+        });
 
-      // 搜索服务
-      const localSearch = new BMap.LocalSearch(map, {
-        onSearchComplete: function (results) {
-          if (localSearch.getStatus() == BMAP_STATUS_SUCCESS) {
-            // 清空列表
-            searchResultContainer.innerHTML = '';
-            const ul = document.createElement('ul');
-
-            for (let i = 0; i < results.getCurrentNumPois(); i++) {
-              const poi = results.getPoi(i);
-              const li = document.createElement('li');
-              li.textContent = poi.title + ' - ' + poi.address;
-              li.addEventListener('click', function () {
-                const point = poi.point;
-                map.centerAndZoom(point, 15);  // 将地图中心移动到选择的地点
-                selectedLocation = { lng: point.lng, lat: point.lat };
-                map.clearOverlays();
-                const newMarker = new BMap.Marker(point);
-                map.addOverlay(newMarker);
-                // 隐藏搜索结果
-                searchResultContainer.style.display = 'none';
-              });
-              ul.appendChild(li);
-            }
-            searchResultContainer.appendChild(ul);
-            // 显示搜索结果
-            searchResultContainer.style.display = 'block';
+        // 保存按钮事件
+        saveButton.addEventListener('click', function () {
+          if (selectedLocation) {
+            console.log('保存的地理位置:', selectedLocation);
+            document.body.removeChild(modalOverlay);
+            return selectedLocation;
+          } else {
+            alert('请选择一个位置！');
           }
-        }
-      });
+        });
+      } else {
+        alert('无法获取当前位置');
+      }
+    });
 
-      // 输入框输入事件，执行搜索
-      searchBox.addEventListener('input', function () {
-        const searchValue = searchBox.value;
-        if (searchValue) {
-          // 搜索地点名称
-          localSearch.search(searchValue);
-        } else {
-          // 隐藏搜索结果
-          searchResultContainer.style.display = 'none';
+    // 搜索服务
+    const localSearch = new BMap.LocalSearch(map, {
+      onSearchComplete: function (results) {
+        if (localSearch.getStatus() == BMAP_STATUS_SUCCESS) {
+          // 清空列表
+          searchResultContainer.innerHTML = '';
+          const ul = document.createElement('ul');
+
+          for (let i = 0; i < results.getCurrentNumPois(); i++) {
+            const poi = results.getPoi(i);
+            const li = document.createElement('li');
+            li.textContent = poi.title + ' - ' + poi.address;
+            li.addEventListener('click', function () {
+              const point = poi.point;
+              map.centerAndZoom(point, 15); // 将地图中心移动到选择的地点
+              selectedLocation = { lng: point.lng, lat: point.lat };
+              map.clearOverlays();
+              const newMarker = new BMap.Marker(point);
+              map.addOverlay(newMarker);
+              // 隐藏搜索结果
+              searchResultContainer.style.display = 'none';
+            });
+            ul.appendChild(li);
+          }
+          searchResultContainer.appendChild(ul);
+          // 显示搜索结果
+          searchResultContainer.style.display = 'block';
         }
-      });
-    },
+      },
+    });
+
+    // 输入框输入事件，执行搜索
+    searchBox.addEventListener('input', function () {
+      const searchValue = searchBox.value;
+      if (searchValue) {
+        // 搜索地点名称
+        localSearch.search(searchValue);
+      } else {
+        // 隐藏搜索结果
+        searchResultContainer.style.display = 'none';
+      }
+    });
+  },
+
   /**
    * 视频压缩 需要配合ffmpeg.min.js使用
    * @param {string} inputFile 输入文件
