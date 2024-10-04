@@ -89,6 +89,7 @@ const h5 = {
         .BMapLabel{
           border: none!important;
           background-color:transparent!important;
+          z-index: 9999999!important;
         }
     `;
     const styleSheet = document.createElement('style');
