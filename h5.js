@@ -78,6 +78,18 @@ const h5 = {
         .save-button:hover {
             background-color: #0056b3;
         }
+        .custom-marker {
+            width: 15px;
+            height: 15px;
+            background-color: red; /* 图标颜色 */
+            border-radius: 50%; /* 圆形图标 */
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .BMapLabel{
+          border: none!important;
+          background-color:transparent!important;
+        }
     `;
     const styleSheet = document.createElement('style');
     styleSheet.type = 'text/css';
@@ -123,10 +135,15 @@ const h5 = {
       if (this.getStatus() === BMAP_STATUS_SUCCESS) {
         const point = new BMap.Point(result.point.lng, result.point.lat);
         map.centerAndZoom(point, 15); // 设置地图中心为当前定位位置
-        const marker = new BMap.Marker(point);
-        map.addOverlay(marker); // 在当前位置打点
 
         let selectedLocation = { lng: result.point.lng, lat: result.point.lat };
+
+        // 自定义Marker，使用CSS样式
+        const markerLabel = new BMap.Label('<div class="custom-marker"></div>', {
+          position: point, // 指定Marker的地理位置
+          offset: new BMap.Size(-16, -16), // 设置偏移，以确保图标居中显示
+        });
+        map.addOverlay(markerLabel); // 添加自定义标记
 
         // 点击选择位置
         map.addEventListener('click', function (e) {
@@ -137,9 +154,12 @@ const h5 = {
           // 清除现有的点
           map.clearOverlays();
 
-          // 添加新的Marker
-          const newMarker = new BMap.Marker(e.point);
-          map.addOverlay(newMarker); // 添加默认标记
+          // 添加新的自定义Marker
+          const newMarkerLabel = new BMap.Label('<div class="custom-marker"></div>', {
+            position: e.point,
+            offset: new BMap.Size(-16, -16), // 偏移设置为图标中心
+          });
+          map.addOverlay(newMarkerLabel); // 添加自定义标记
         });
 
         // 保存按钮事件
@@ -174,8 +194,11 @@ const h5 = {
               map.centerAndZoom(point, 15); // 将地图中心移动到选择的地点
               selectedLocation = { lng: point.lng, lat: point.lat };
               map.clearOverlays();
-              const newMarker = new BMap.Marker(point);
-              map.addOverlay(newMarker);
+              const newMarkerLabel = new BMap.Label('<div class="custom-marker"></div>', {
+                position: point,
+                offset: new BMap.Size(-16, -16), // 偏移设置为图标中心
+              });
+              map.addOverlay(newMarkerLabel); // 添加自定义标记
               // 隐藏搜索结果
               searchResultContainer.style.display = 'none';
             });
