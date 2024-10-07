@@ -85,6 +85,7 @@ const h5 = {
             border-radius: 50%; /* 圆形图标 */
             border: 2px solid white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: fixed;
         }
         .BMapLabel{
           border: none!important;
