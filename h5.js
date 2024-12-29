@@ -1,7 +1,16 @@
 const h5 = {
+  /* 使用方法：
+    uploadImagesAsync(url, attachment_file, _files)
+      .then((result) => {
+        console.log('全部上传成功，返回值:', result);
+      })
+      .catch((error) => {
+        console.error(`图片上传失败，索引: ${error.index}, 错误信息: ${error.message}`);
+      });
+  */
   function uploadImagesAsync(url, attachment_file, _files) {
     return new Promise((resolve, reject) => {
-      // 定义一个数组来存储所有的上传 Promise
+      // 存储所有的上传Promise
       const uploadPromises = _files.map((file, index) => {
         return new Promise((resolve, reject) => {
           // 获取文件的 base64 数据
@@ -28,11 +37,11 @@ const h5 = {
               if (response.ecode === 0) {
                 resolve(); // 上传成功
               } else {
-                reject(new Error(`上传失败，错误码：${response.ecode}`));
+                reject({ index, message: `上传失败，错误码：${response.ecode}` });
               }
             },
             error: (xhr, status, error) => {
-              reject(new Error(`上传失败：${error}`));
+              reject({ index, message: `上传失败：${error}` });
             }
           });
         });
@@ -45,7 +54,7 @@ const h5 = {
         })
         .catch((error) => {
           console.error('部分图片上传失败', error);
-          reject(error); // 有图片上传失败
+          reject(error); // 返回包含错误信息的对象
         });
     });
   },
