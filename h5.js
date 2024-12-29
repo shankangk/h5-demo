@@ -1,4 +1,54 @@
 const h5 = {
+  function uploadImagesAsync(url, attachment_file, _files) {
+    return new Promise((resolve, reject) => {
+      // 定义一个数组来存储所有的上传 Promise
+      const uploadPromises = _files.map((file, index) => {
+        return new Promise((resolve, reject) => {
+          // 获取文件的 base64 数据
+          const file_text = attachment_file[file.filepath][index];
+          
+          // 创建 FormData 对象
+          const formData = new FormData();
+          const blob = app.convertBase64ToBlob(file_text);
+          formData.append('file', blob);
+          formData.append('id', file.id);
+          formData.append('type', file.type);
+  
+          // 发送 AJAX 请求
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+              'accessToken': _token
+            },
+            success: (response) => {
+              if (response.ecode === 0) {
+                resolve(); // 上传成功
+              } else {
+                reject(new Error(`上传失败，错误码：${response.ecode}`));
+              }
+            },
+            error: (xhr, status, error) => {
+              reject(new Error(`上传失败：${error}`));
+            }
+          });
+        });
+      });
+  
+      // 等待所有上传完成
+      Promise.all(uploadPromises)
+        .then(() => {
+          resolve(1); // 全部上传成功，返回 1
+        })
+        .catch((error) => {
+          console.error('部分图片上传失败', error);
+          reject(error); // 有图片上传失败
+        });
+    });
+  },
   // 百度地图弹窗选择地理位置
   openBaiduMapModal() {
     const style = `
