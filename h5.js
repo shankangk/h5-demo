@@ -1,4 +1,33 @@
 const h5 = {
+  // 图片添加水印 使用方法与addWatermarkToImage一样，只是这个方法会自动调整字体大小和位置
+  addWatermarkToImageAutoSize: function () {
+    const img = new Image();
+    img.crossOrigin = 'anonymous'; // 防止图片不同源
+    img.onload = function () {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      watermarks.forEach((watermark) => {
+        // 动态调整字体大小和位置
+        const fontSize = (watermark.fontSizeRatio || 0.05) * img.width; // 按图片宽度的比例计算字体大小
+        const x = (watermark.xRatio || 0.02) * img.width; // 按图片宽度比例计算水印的X坐标
+        const y = (watermark.yRatio || 0.98) * img.height; // 按图片高度比例计算水印的Y坐标
+
+        ctx.font = `${fontSize}px ${watermark.font || 'Arial'}`;
+        ctx.fillStyle = watermark.color || 'rgba(255, 255, 255, 0.5)';
+        ctx.textAlign = watermark.textAlign || 'left';
+        ctx.textBaseline = watermark.textBaseline || 'bottom';
+        ctx.fillText(watermark.text, x, y);
+      });
+
+      const watermarkedImage = canvas.toDataURL('image/png');
+      callback(watermarkedImage);
+    };
+    img.src = imageSrc;
+  },
   /* 使用方法：
     uploadImagesAsync(url, attachment_file, _files)
       .then((result) => {
@@ -8,21 +37,21 @@ const h5 = {
         console.error(`图片上传失败，索引: ${error.index}, 错误信息: ${error.message}`);
       });
   */
-  function uploadImagesAsync(url, attachment_file, _files) {
+  uploadImagesAsync: function (url, attachment_file, _files) {
     return new Promise((resolve, reject) => {
       // 存储所有的上传Promise
       const uploadPromises = _files.map((file, index) => {
         return new Promise((resolve, reject) => {
           // 获取文件的 base64 数据
           const file_text = attachment_file[file.filepath][index];
-          
+
           // 创建 FormData 对象
           const formData = new FormData();
           const blob = app.convertBase64ToBlob(file_text);
           formData.append('file', blob);
           formData.append('id', file.id);
           formData.append('type', file.type);
-  
+
           // 发送 AJAX 请求
           $.ajax({
             url: url,
@@ -31,7 +60,7 @@ const h5 = {
             processData: false,
             contentType: false,
             headers: {
-              'accessToken': _token
+              accessToken: _token,
             },
             success: (response) => {
               if (response.ecode === 0) {
@@ -42,11 +71,11 @@ const h5 = {
             },
             error: (xhr, status, error) => {
               reject({ index, message: `上传失败：${error}` });
-            }
+            },
           });
         });
       });
-  
+
       // 等待所有上传完成
       Promise.all(uploadPromises)
         .then(() => {
@@ -59,7 +88,7 @@ const h5 = {
     });
   },
   // 百度地图弹窗选择地理位置
-  openBaiduMapModal() {
+  openBaiduMapModal: function () {
     const style = `
         html, body {
             height: 100%;
@@ -293,7 +322,7 @@ const h5 = {
   // compressVideo(selectedFile, async (compressedBlob) => {
   // 	console.log('压缩后的视频流', compressedBlob);
   // });
-  async compressVideo(inputFile, callback) {
+  compressVideo: async function (inputFile, callback) {
     const { createFFmpeg, fetchFile } = FFmpeg;
     const ffmpeg = createFFmpeg({ log: true });
 

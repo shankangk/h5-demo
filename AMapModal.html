@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高德地图全屏弹窗</title>
+  <script type="text/javascript">
+    window._AMapSecurityConfig = {
+      securityJsCode: '7f44ced4a1b9d4204f463d3fca4f9cbd',
+    }
+  </script>
+  <script src="https://webapi.amap.com/maps?v=2.0&key=05ef96c10690a8e59c9cbf31e4ec5520"></script>
+</head>
+
+<body>
+  <button onclick="openAMapModal()">打开高德地图</button>
+  <script>
+    function openAMapModal() {
+      const style = `
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+        }
+        .map-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .search-box {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            background-color: white;
+            z-index: 10001;
+            box-sizing: border-box;
+        }
+        .search-result {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            max-height: 30vh;
+            background-color: white;
+            overflow-y: auto;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+        }
+        .search-result ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .search-result li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .search-result li:hover {
+            background-color: #f0f0f0;
+        }
+        .save-button {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .save-button:hover {
+            background-color: #0056b3;
+        }
+        .amap-sug-result{
+          z-index: 99999;
+        }
+    `;
+      const styleSheet = document.createElement("style");
+      styleSheet.type = "text/css";
+      styleSheet.innerText = style;
+      document.head.appendChild(styleSheet);
+
+      // 遮罩层
+      const modalOverlay = document.createElement('div');
+      modalOverlay.classList.add('modal-overlay');
+
+      const mapContainer = document.createElement('div');
+      mapContainer.classList.add('map-container');
+      mapContainer.setAttribute('id', 'AMap');
+
+      modalOverlay.appendChild(mapContainer);
+      document.body.appendChild(modalOverlay);
+
+      // 搜索输入框
+      const searchBox = document.createElement('input');
+      searchBox.classList.add('search-box');
+      searchBox.type = 'text';
+      searchBox.placeholder = '搜索地点';
+      searchBox.setAttribute('id', 'input');
+      modalOverlay.appendChild(searchBox);
+
+      // 列表
+      const searchResultContainer = document.createElement('div');
+      searchResultContainer.classList.add('search-result');
+      searchResultContainer.setAttribute('id', 'search-result');
+      modalOverlay.appendChild(searchResultContainer);
+
+      // 保存按钮
+      const saveButton = document.createElement('button');
+      saveButton.innerText = '确认选择';
+      saveButton.classList.add('save-button');
+      modalOverlay.appendChild(saveButton);
+
+      // 地图初始化
+      const map = new AMap.Map("AMap", {
+        viewMode: '2D', // 默认使用 2D 模式，如果希望使用带有俯仰角的 3D 模式，请设置 viewMode: '3D'
+        zoom: 14, // 初始化地图层级
+        center: [116.397428, 39.90923] // 初始化地图中心点
+      });
+
+      AMap.plugin('AMap.Geolocation', function () {
+        var geolocation = new AMap.Geolocation({
+          enableHighAccuracy: true, // 是否使用高精度定位，默认：true
+          timeout: 10000, // 设置定位超时时间，默认：无穷大
+          offset: [10, 20],  // 定位按钮的停靠位置的偏移量
+          zoomToAccuracy: true,  //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+          position: 'RB' //  定位按钮的排放位置,  RB表示右下
+        })
+
+        geolocation.getCurrentPosition(function (status, result) {
+          if (status == 'complete') {
+            onComplete(result)
+          } else {
+            onError(result)
+          }
+        });
+
+        function onComplete(data) {
+          console.log('定位成功:', data)
+          const position = new AMap.LngLat(data.position.lng, data.position.lat); //传入经纬度
+
+          // 设置当前位置点
+          const newMarker = new AMap.Marker({
+            position: [data.position.lng, data.position.lat]
+          });
+          map.add(newMarker);
+
+          map.setCenter(position);
+          // 点击选择位置
+          map.on('click', (ev) => {
+            const { lng, lat } = ev.lnglat;
+            console.log(`Selected Location: ${lng}, ${lat}`);
+            // 清除点全部打点
+            map.clearMap();
+            const newMarker = new AMap.Marker({
+              position: [lng, lat]
+            });
+            map.add(newMarker);
+          })
+        }
+
+        function onError(data) {
+          console.log('定位失败:', data)
+          alert('无法获取当前位置，请手动选择');
+        }
+      })
+
+      searchBox.addEventListener('input', function () {
+        const searchValue = searchBox.value;
+        // 移除已经渲染的amap-sug-result
+        const outPutBox = document.getElementsByClassName('amap-sug-result');
+        if (outPutBox.length > 1) {
+          // 移除除了最后一项的所有项
+          for (let i = 0; i < outPutBox.length - 1; i++) {
+            outPutBox[i].remove();
+          }
+        }
+        if (searchValue) {
+          AMap.plugin("AMap.AutoComplete", function () {
+            var autoOptions = {
+              input: "input", //"input_id"替换为输入框实际 id 
+            };
+            var autoComplete = new AMap.AutoComplete(autoOptions);
+            autoComplete.on("select", function (e) {
+              console.log(e);
+            });
+          });
+        } else {
+          // 隐藏搜索结果
+          searchResultContainer.style.display = 'none';
+        }
+      });
+
+
+
+
+
+      // const geolocation = new AMap.Geolocation();
+      // geolocation.getCurrentPosition(function (result) {
+      //   if (this.getStatus() === AMap_STATUS_SUCCESS) {
+      //     const point = new AMap.Point(result.point.lng, result.point.lat);
+      //     map.centerAndZoom(point, 15);  // 设置地图中心为当前定位位置
+      //     const marker = new AMap.Marker(point);
+      //     map.addOverlay(marker);  // 在当前位置打点
+
+      //     let selectedLocation = { lng: result.point.lng, lat: result.point.lat };
+
+      //     // 点击选择位置
+      //     map.addEventListener("click", function (e) {
+      //       const { lng, lat } = e.point;
+      //       selectedLocation = { lng, lat };
+      //       console.log(`Selected Location: ${lng}, ${lat}`);
+      //       // 清除点 打点
+      //       map.clearOverlays();
+      //       const newMarker = new AMap.Marker(e.point);
+      //       map.addOverlay(newMarker);
+      //     });
+
+      //     // 保存按钮事件
+      //     saveButton.addEventListener('click', function () {
+      //       if (selectedLocation) {
+      //         console.log('保存的地理位置:', selectedLocation);
+      //         document.body.removeChild(modalOverlay);
+      //         return selectedLocation;
+      //       } else {
+      //         alert("请选择一个位置！");
+      //       }
+      //     });
+
+      //   } else {
+      //     alert('无法获取当前位置');
+      //   }
+      // });
+
+      // // 搜索服务
+      // const localSearch = new AMap.LocalSearch(map, {
+      //   onSearchComplete: function (results) {
+      //     if (localSearch.getStatus() == AMap_STATUS_SUCCESS) {
+      //       // 清空列表
+      //       searchResultContainer.innerHTML = '';
+      //       const ul = document.createElement('ul');
+
+      //       for (let i = 0; i < results.getCurrentNumPois(); i++) {
+      //         const poi = results.getPoi(i);
+      //         const li = document.createElement('li');
+      //         li.textContent = poi.title + ' - ' + poi.address;
+      //         li.addEventListener('click', function () {
+      //           const point = poi.point;
+      //           map.centerAndZoom(point, 15);  // 将地图中心移动到选择的地点
+      //           selectedLocation = { lng: point.lng, lat: point.lat };
+      //           map.clearOverlays();
+      //           const newMarker = new AMap.Marker(point);
+      //           map.addOverlay(newMarker);
+      //           // 隐藏搜索结果
+      //           searchResultContainer.style.display = 'none';
+      //         });
+      //         ul.appendChild(li);
+      //       }
+      //       searchResultContainer.appendChild(ul);
+      //       // 显示搜索结果
+      //       searchResultContainer.style.display = 'block';
+      //     }
+      //   }
+      // });
+
+      // // 输入框输入事件，执行搜索
+      // searchBox.addEventListener('input', function () {
+      //   const searchValue = searchBox.value;
+      //   if (searchValue) {
+      //     // 搜索地点名称
+      //     localSearch.search(searchValue);
+      //   } else {
+      //     // 隐藏搜索结果
+      //     searchResultContainer.style.display = 'none';
+      //   }
+      // });
+    }
+
+  </script>
+
+</body>
+
+</html>
