@@ -51,31 +51,6 @@
             z-index: 10001;
             box-sizing: border-box;
         }
-        .search-result {
-            position: absolute;
-            top: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            max-height: 30vh;
-            background-color: white;
-            overflow-y: auto;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 10000;
-        }
-        .search-result ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .search-result li {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .search-result li:hover {
-            background-color: #f0f0f0;
-        }
         .save-button {
             position: absolute;
             bottom: 0;
@@ -90,9 +65,6 @@
             border: none;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
             z-index: 999;
-        }
-        .save-button:hover {
-            background-color: #0056b3;
         }
         .amap-sug-result{
           z-index: 99999;
@@ -122,17 +94,24 @@
       searchBox.setAttribute('id', 'input');
       modalOverlay.appendChild(searchBox);
 
-      // 列表
-      const searchResultContainer = document.createElement('div');
-      searchResultContainer.classList.add('search-result');
-      searchResultContainer.setAttribute('id', 'search-result');
-      modalOverlay.appendChild(searchResultContainer);
 
       // 保存按钮
       const saveButton = document.createElement('button');
       saveButton.innerText = '确认选择';
       saveButton.classList.add('save-button');
       modalOverlay.appendChild(saveButton);
+
+      // 保存按钮事件
+      let selectedLocation;
+      saveButton.addEventListener('click', function () {
+        if (selectedLocation) {
+          console.log('保存的地理位置:', selectedLocation);
+          document.body.removeChild(modalOverlay);
+          return selectedLocation;
+        } else {
+          alert("请选择一个位置！");
+        }
+      });
 
       // 地图初始化
       const map = new AMap.Map("AMap", {
@@ -168,24 +147,29 @@
           });
           map.add(newMarker);
 
+          selectedLocation = { lng: data.position.lng, lat: data.position.lat };
+
           map.setCenter(position);
-          // 点击选择位置
-          map.on('click', (ev) => {
-            const { lng, lat } = ev.lnglat;
-            console.log(`Selected Location: ${lng}, ${lat}`);
-            // 清除点全部打点
-            map.clearMap();
-            const newMarker = new AMap.Marker({
-              position: [lng, lat]
-            });
-            map.add(newMarker);
-          })
+
         }
 
         function onError(data) {
           console.log('定位失败:', data)
           alert('无法获取当前位置，请手动选择');
         }
+      })
+
+      // 点击选择位置
+      map.on('click', (ev) => {
+        const { lng, lat } = ev.lnglat;
+        console.log(`Selected Location: ${lng}, ${lat}`);
+        // 清除点全部打点
+        map.clearMap();
+        const newMarker = new AMap.Marker({
+          position: [lng, lat]
+        });
+        map.add(newMarker);
+        selectedLocation = { lng, lat };
       })
 
       searchBox.addEventListener('input', function () {
@@ -206,97 +190,18 @@
             var autoComplete = new AMap.AutoComplete(autoOptions);
             autoComplete.on("select", function (e) {
               console.log(e);
+              const { lng, lat } = e.poi.location;
+              map.setCenter([lng, lat]);
+              map.clearMap();
+              const newMarker = new AMap.Marker({
+                position: [lng, lat]
+              });
+              map.add(newMarker);
+              selectedLocation = { lng, lat };
             });
           });
-        } else {
-          // 隐藏搜索结果
-          searchResultContainer.style.display = 'none';
         }
       });
-
-
-
-
-
-      // const geolocation = new AMap.Geolocation();
-      // geolocation.getCurrentPosition(function (result) {
-      //   if (this.getStatus() === AMap_STATUS_SUCCESS) {
-      //     const point = new AMap.Point(result.point.lng, result.point.lat);
-      //     map.centerAndZoom(point, 15);  // 设置地图中心为当前定位位置
-      //     const marker = new AMap.Marker(point);
-      //     map.addOverlay(marker);  // 在当前位置打点
-
-      //     let selectedLocation = { lng: result.point.lng, lat: result.point.lat };
-
-      //     // 点击选择位置
-      //     map.addEventListener("click", function (e) {
-      //       const { lng, lat } = e.point;
-      //       selectedLocation = { lng, lat };
-      //       console.log(`Selected Location: ${lng}, ${lat}`);
-      //       // 清除点 打点
-      //       map.clearOverlays();
-      //       const newMarker = new AMap.Marker(e.point);
-      //       map.addOverlay(newMarker);
-      //     });
-
-      //     // 保存按钮事件
-      //     saveButton.addEventListener('click', function () {
-      //       if (selectedLocation) {
-      //         console.log('保存的地理位置:', selectedLocation);
-      //         document.body.removeChild(modalOverlay);
-      //         return selectedLocation;
-      //       } else {
-      //         alert("请选择一个位置！");
-      //       }
-      //     });
-
-      //   } else {
-      //     alert('无法获取当前位置');
-      //   }
-      // });
-
-      // // 搜索服务
-      // const localSearch = new AMap.LocalSearch(map, {
-      //   onSearchComplete: function (results) {
-      //     if (localSearch.getStatus() == AMap_STATUS_SUCCESS) {
-      //       // 清空列表
-      //       searchResultContainer.innerHTML = '';
-      //       const ul = document.createElement('ul');
-
-      //       for (let i = 0; i < results.getCurrentNumPois(); i++) {
-      //         const poi = results.getPoi(i);
-      //         const li = document.createElement('li');
-      //         li.textContent = poi.title + ' - ' + poi.address;
-      //         li.addEventListener('click', function () {
-      //           const point = poi.point;
-      //           map.centerAndZoom(point, 15);  // 将地图中心移动到选择的地点
-      //           selectedLocation = { lng: point.lng, lat: point.lat };
-      //           map.clearOverlays();
-      //           const newMarker = new AMap.Marker(point);
-      //           map.addOverlay(newMarker);
-      //           // 隐藏搜索结果
-      //           searchResultContainer.style.display = 'none';
-      //         });
-      //         ul.appendChild(li);
-      //       }
-      //       searchResultContainer.appendChild(ul);
-      //       // 显示搜索结果
-      //       searchResultContainer.style.display = 'block';
-      //     }
-      //   }
-      // });
-
-      // // 输入框输入事件，执行搜索
-      // searchBox.addEventListener('input', function () {
-      //   const searchValue = searchBox.value;
-      //   if (searchValue) {
-      //     // 搜索地点名称
-      //     localSearch.search(searchValue);
-      //   } else {
-      //     // 隐藏搜索结果
-      //     searchResultContainer.style.display = 'none';
-      //   }
-      // });
     }
 
   </script>
