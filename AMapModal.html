@@ -51,6 +51,31 @@
             z-index: 10001;
             box-sizing: border-box;
         }
+        .search-result {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            max-height: 30vh;
+            background-color: white;
+            overflow-y: auto;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+        }
+        .search-result ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .search-result li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .search-result li:hover {
+            background-color: #f0f0f0;
+        }
         .save-button {
             position: absolute;
             bottom: 0;
@@ -65,6 +90,9 @@
             border: none;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
             z-index: 999;
+        }
+        .save-button:hover {
+            background-color: #0056b3;
         }
         .amap-sug-result{
           z-index: 99999;
@@ -94,6 +122,11 @@
       searchBox.setAttribute('id', 'input');
       modalOverlay.appendChild(searchBox);
 
+      // 列表
+      const searchResultContainer = document.createElement('div');
+      searchResultContainer.classList.add('search-result');
+      searchResultContainer.setAttribute('id', 'search-result');
+      modalOverlay.appendChild(searchResultContainer);
 
       // 保存按钮
       const saveButton = document.createElement('button');
@@ -102,7 +135,7 @@
       modalOverlay.appendChild(saveButton);
 
       // 保存按钮事件
-      let selectedLocation;
+      var selectedLocation;
       saveButton.addEventListener('click', function () {
         if (selectedLocation) {
           console.log('保存的地理位置:', selectedLocation);
@@ -119,6 +152,12 @@
         zoom: 14, // 初始化地图层级
         center: [116.397428, 39.90923] // 初始化地图中心点
       });
+      var geocoder
+      AMap.plugin('AMap.Geocoder', function () {
+        geocoder = new AMap.Geocoder({
+          extensions: "all" // 返回地址信息
+        })
+      })
 
       AMap.plugin('AMap.Geolocation', function () {
         var geolocation = new AMap.Geolocation({
@@ -140,36 +179,53 @@
         function onComplete(data) {
           console.log('定位成功:', data)
           const position = new AMap.LngLat(data.position.lng, data.position.lat); //传入经纬度
-
+          console.log('posi', position)
           // 设置当前位置点
           const newMarker = new AMap.Marker({
             position: [data.position.lng, data.position.lat]
           });
           map.add(newMarker);
 
-          selectedLocation = { lng: data.position.lng, lat: data.position.lat };
+          geocoder.getAddress([data.position.lng, data.position.lat], function (status, result) {
+            if (status === 'complete' && result.regeocode) {
+              // console.log('当前详细位置地址:', address);
+              const address = result.regeocode.formattedAddress;
+              const { province, city, citycode, district, township, towncode, street, streetNumber, building, buildingType, adcode } = result.regeocode.addressComponent;
+              selectedLocation = { lng: data.position.lng, lat: data.position.lat, address, province, city, citycode, district, township, towncode, street, streetNumber, building, buildingType, adcode };
+            } else {
+              console.log('获取详细地址失败');
+            }
+          })
+
 
           map.setCenter(position);
-
+          // 点击选择位置
+          map.on('click', (ev) => {
+            const { lng, lat } = ev.lnglat;
+            console.log(`Selected Location: ${lng}, ${lat}`);
+            // 清除点全部打点
+            map.clearMap();
+            const newMarker = new AMap.Marker({
+              position: [lng, lat]
+            });
+            map.add(newMarker);
+            geocoder.getAddress([lng, lat], function (status, result) {
+              if (status === 'complete' && result.regeocode) {
+                const address = result.regeocode.formattedAddress;
+                const { province, city, citycode, district, township, towncode, street, streetNumber, building, buildingType, adcode } = result.regeocode.addressComponent;
+                selectedLocation = { lng: data.position.lng, lat: data.position.lat, address, province, city, citycode, district, township, towncode, street, streetNumber, building, buildingType, adcode };
+                // console.log('当前详细位置地址:', address, result);
+              } else {
+                console.log('获取详细地址失败');
+              }
+            })
+          })
         }
 
         function onError(data) {
           console.log('定位失败:', data)
           alert('无法获取当前位置，请手动选择');
         }
-      })
-
-      // 点击选择位置
-      map.on('click', (ev) => {
-        const { lng, lat } = ev.lnglat;
-        console.log(`Selected Location: ${lng}, ${lat}`);
-        // 清除点全部打点
-        map.clearMap();
-        const newMarker = new AMap.Marker({
-          position: [lng, lat]
-        });
-        map.add(newMarker);
-        selectedLocation = { lng, lat };
       })
 
       searchBox.addEventListener('input', function () {
@@ -191,15 +247,12 @@
             autoComplete.on("select", function (e) {
               console.log(e);
               const { lng, lat } = e.poi.location;
-              map.setCenter([lng, lat]);
-              map.clearMap();
-              const newMarker = new AMap.Marker({
-                position: [lng, lat]
-              });
-              map.add(newMarker);
               selectedLocation = { lng, lat };
             });
           });
+        } else {
+          // 隐藏搜索结果
+          searchResultContainer.style.display = 'none';
         }
       });
     }
